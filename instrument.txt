@@ -1,0 +1,66 @@
+import pandas as pd
+import utils
+
+class Instrument():
+    def __init__(self, ob):
+        self.name = ob['name']
+        self.type = ob['type']
+        self.displayName = ob['displayName']
+        self.pipLocation = pow(10, ob['pipLocation']) #-4 --> .0001
+        self.displayPrecision = ob['displayPrecision']
+        self.tradeUnitsPrecision = ob['tradeUnitsPrecision']
+        self.minimumTradeSize = ob['minimumTradeSize']
+        self.maximumTrailingStopDistance = ob['maximumTrailingStopDistance']
+        self.minimumTrailingStopDistance = ob['minimumTrailingStopDistance']
+        self.maximumPositionSize = ob['maximumPositionSize']
+        self.maximumOrderUnits = ob['maximumOrderUnits']
+        self.marginRate = ob['marginRate']
+        self.guaranteedStopLossOrderMode = ob['guaranteedStopLossOrderMode']
+        self.tags = ob['tags']
+        self.financing = ob['financing']
+
+    def __repr__(self):
+        return str(vars(self))
+
+    @classmethod
+    def get_instruments_df(cls):
+        return pd.read_pickle(utils.get_instruments_data_filename())
+
+    @classmethod
+    def get_instruments_list(cls):
+        df = cls.get_instruments_df()
+        #this is a for loop that loops through the list of objects and create a new instrument out of that object
+        return [Instrument(x) for x in df.to_dict(orient='records')]
+
+    @classmethod
+    def get_instruments_dict(cls): #TEST DIDNT RUN
+        i_list = cls.get_instruments_list()
+        i_keys = [x.name for x in i_list]
+        # Create a dictionary with names as keys and Instrument objects as values
+        
+        #return { k: v for k, v in zip(i_list, i_keys) }
+        
+
+    @classmethod
+    def get_instrument_by_name(cls, pairname):
+        d = cls.get_instruments_dict()
+        if pairname in d:
+            return d[pairname]
+        else:
+            return None
+
+#TESTER
+if __name__ == '__main__':
+    df = Instrument.get_instruments_df()
+    ll = df.to_dict(orient= 'records')
+
+    #for item in ll:
+    #    print (item)
+
+    print(Instrument.get_instruments_list())
+
+    #for k,v in Instrument.get_instruments_dict().items():
+    #    print(k, v)
+
+    #print(Instrument.get_instrument_by_name('EUR_GBP'))
+
